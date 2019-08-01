@@ -113,5 +113,61 @@ app.post('/miss_req',function(request,response){
 			});
 	});
 });
+app.post('/accept_help',function(request,response){
+	var quer=" update help set status='ACCEPTED' where id="+request.body.id;
+	console.log(quer);
+	db.query(quer,function(err,result){
+		if (err) 
+		{
+			response.json({status:"NOT_OK"});
+			throw err;
+		}
+		else
+		response.json({status:"OK"});
+			});
+});
 
+app.post('/accept_req',function(request,response){
+	var quer=" update requests set status='ACCEPTED' where id="+request.body.id;
+	console.log(quer);
+	db.query(quer,function(err,result){
+		if (err) 
+		{
+			response.json({status:"NOT_OK"});
+			throw err;
+		}
+		else
+		response.json({status:"OK"});
+			});
+});
+
+app.post('/requests',function(request,response){
+	var quer="select * from requests where name='"+request.body.name+"' and contact='"+request.body.contact+"' and requested_user="+request.body.requested_user;
+	console.log(quer);
+	db.query(quer,function(err,result){
+		if (err) throw err;
+		console.log(request.body.username);
+		console.log(result);
+		if(result.length==1)
+		response.json({status:"NOT_OK"});
+		else
+			quer="insert into requests (name,contact,no_of_people,food,water,soap,dress,bed,medicine,location,status,requested_user,accepted_user) values ('"+request.body.name+"','"+request.body.contact+"',"+request.body.count+","+request.body.food+","+request.body.water+","+request.body.soap+","+request.body.dress+","+request.body.bed+","+request.body.medicine+",'"+request.body.location+"','OPEN',"+request.body.requested_user+",1)";
+			console.log(quer);
+			db.query(quer,function(err,result){
+			if(err) throw err;	
+			else
+							response.json({status:"OK"});
+			});
+	});
+});
+app.post('/request_res',function(request,response){
+	var quer="select * from requests where status='OPEN'";
+	db.query(quer,function(err,result){
+		if (err) throw err;
+		console.log(request.body.username);
+		console.log(result.length);
+		response.json(result);
+		
+	});
+});
 app.listen(80);
