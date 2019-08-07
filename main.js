@@ -30,7 +30,7 @@ app.post('/login',function(request,response){
 		console.log(request.body.username);
 		console.log(result.length);
 		if(result.length==1)
-		response.json({status:"OK"});
+		response.json(result);
 		else
 			response.json({status:"NOT_OK"});
 	});
@@ -40,23 +40,38 @@ app.post('/reg',function(request,response){
 	console.log(quer);
 	db.query(quer,function(err,result){
 		if (err) throw err;
+		else
+			{
 		console.log(request.body.username);
 		console.log(result);
 		if(result.length==1)
 		response.json({status:"NOT_OK"});
 		else
-			quer="insert into user (name,email,phone,type,password) values ('"+request.body.username+"','"+request.body.mail+"','"+request.body.phone+"','"+request.body.type+"','"+request.body.password+"')";
+		{quer="insert into user (name,email,phone,type,password) values ('"+request.body.username+"','"+request.body.mail+"','"+request.body.phone+"','"+request.body.type+"','"+request.body.password+"')";
 			console.log(quer);
 			db.query(quer,function(err,result){
 			if(err) throw err;	
-			else
-							response.json({status:"OK"});
+			else{
+				console.log("reg success");		
+				response.json({status:"OK"});}
 			});
+		}
+	}
 	});
 });
 
 app.post('/help_res',function(request,response){
 	var quer="select * from help where status='OPEN'";
+	db.query(quer,function(err,result){
+		if (err) throw err;
+		console.log(request.body.username);
+		console.log(result.length);
+		response.json(result);
+		
+	});
+});
+app.post('/help_mine',function(request,response){
+	var quer="select * from help where requested_user="+request.body.userid;
 	db.query(quer,function(err,result){
 		if (err) throw err;
 		console.log(request.body.username);
@@ -151,7 +166,7 @@ app.post('/requests',function(request,response){
 		if(result.length==1)
 		response.json({status:"NOT_OK"});
 		else
-			quer="insert into requests (name,contact,no_of_people,food,water,soap,dress,bed,medicine,location,status,requested_user,accepted_user) values ('"+request.body.name+"','"+request.body.contact+"',"+request.body.count+","+request.body.food+","+request.body.water+","+request.body.soap+","+request.body.dress+","+request.body.bed+","+request.body.medicine+",'"+request.body.location+"','OPEN',"+request.body.requested_user+",1)";
+			quer="insert into requests (name,contact,no_of_people,food,water,soap,dress,bed,medicine,location,status,requested_user,accepted_user) values ('"+request.body.name+"','"+request.body.contact+"',"+request.body.count+",'"+request.body.food+"','"+request.body.water+"','"+request.body.soap+"','"+request.body.dress+"','"+request.body.bed+"','"+request.body.medicine+"','"+request.body.location+"','OPEN',"+request.body.requested_user+",1)";
 			console.log(quer);
 			db.query(quer,function(err,result){
 			if(err) throw err;	

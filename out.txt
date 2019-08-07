@@ -1,0 +1,40 @@
+Field	Type	Null	Key	Default	Extra
+id	int(11)	NO	PRI	NULL	auto_increment
+name	varchar(45)	NO		NULL	
+email	varchar(45)	NO		NULL	
+phone	varchar(45)	NO		NULL	
+type	varchar(45)	NO		NULL	
+password	varchar(45)	YES		NULL	
+Field	Type	Null	Key	Default	Extra
+id	int(11)	NO	PRI	NULL	auto_increment
+name	varchar(45)	NO		NULL	
+contact	varchar(45)	NO		NULL	
+no_of_people	int(11)	NO		NULL	
+food	int(11)	NO		NULL	
+water	int(11)	NO		NULL	
+soap	int(11)	NO		NULL	
+dress	int(11)	NO		NULL	
+bed	int(11)	NO		NULL	
+medicine	int(11)	NO		NULL	
+location	varchar(45)	NO		NULL	
+status	varchar(45)	NO		NULL	
+requested_user	int(11)	NO	MUL	NULL	
+accepted_user	int(11)	NO	MUL	NULL	
+Field	Type	Null	Key	Default	Extra
+id	int(11)	NO	PRI	NULL	auto_increment
+name	varchar(45)	NO		NULL	
+age	int(11)	NO		NULL	
+gender	varchar(45)	NO		NULL	
+location	varchar(45)	NO		NULL	
+miss_found	varchar(45)	NO		NULL	
+reported_user	int(11)	NO	MUL	NULL	
+Field	Type	Null	Key	Default	Extra
+id	int(11)	NO	PRI	NULL	auto_increment
+no_of_people	int(11)	NO		NULL	
+landmark	varchar(45)	NO		NULL	
+contact	varchar(45)	NO		NULL	
+message	varchar(100)	NO		NULL	
+location	varchar(45)	NO		NULL	
+requested_user	int(11)	NO	MUL	NULL	
+accepted_user	int(11)	NO	MUL	1	
+status	varchar(45)	NO		OPEN	
