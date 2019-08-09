@@ -100,7 +100,21 @@ app.post('/help_req',function(request,response){
 	});
 });
 app.post('/miss_res',function(request,response){
-	var quer="select * from missing where miss_found='"+request.body.type+"'";
+	var quer="select missing.id,missing.name,missing.age,missing.gender,missing.location,user.name 'reported_user',user.phone 'contact',user.id 'reported_uid' from missing,user where missing.reported_user=user.id and miss_found='"+request.body.type+"'"
+//	var quer="select * from missing where ;
+	console.log(quer);
+	db.query(quer,function(err,result){
+		if (err) throw err;
+//		console.log(request.body.username);
+		console.log(result.length);
+		response.json(result);
+		
+	});
+});
+app.post('/del_miss',function(request,response){
+	var quer="delete from missing where id="+request.body.id;
+//	var quer="select * from missing where ;
+	console.log(quer);
 	db.query(quer,function(err,result){
 		if (err) throw err;
 //		console.log(request.body.username);
@@ -185,4 +199,15 @@ app.post('/request_res',function(request,response){
 		
 	});
 });
+app.post('/request_mine',function(request,response){
+	var quer="select * from requests where requested_user="+request.body.userid;
+	db.query(quer,function(err,result){
+		if (err) throw err;
+		console.log(request.body.username);
+		console.log(result.length);
+		response.json(result);
+		
+	});
+});
+
 app.listen(80);
