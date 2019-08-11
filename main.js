@@ -1,6 +1,8 @@
 var express = require('express');
- 
+var payumoney = require('payumoney-node');
+payumoney.setKeys("Ew9BexMK", "rum21IvEWc", "hShRcqtbGEK+gzBGRqwcnlJnacS86GhGQbf6o5uvNZM="); 
 var app = express();
+payumoney.isProdMode(true);
 
 app.use(express.urlencoded());
 var db = require('./dbcon');
@@ -8,7 +10,30 @@ var db = require('./dbcon');
 app.use(express.json());
 
 app.get('/notes', function(req, res) {
-  res.json({notes: "This is your notebook. Edit this to start saving your notes!"});
+var cash = req.query.amount;
+//  var cash="10";
+	//res.json({notes: "This is your notebook. Edit this to start saving your notes!"});
+	var paymentData = {
+    productinfo: "test",
+    txnid: "12343254",
+    amount: cash,
+    email: "jkjjithinjkj@gmail.com",
+    phone: "8891676114",
+    lastname: "jayaraj",
+    firstname: "Jithin k",
+    surl: "", //"http://localhost:3000/payu/success"
+    furl: "", //"http://localhost:3000/payu/fail"
+};
+ 
+payumoney.makePayment(paymentData, function(error, response) {
+  if (error) {
+    // Some error
+  } else {
+    // Payment redirection link
+    console.log(response);
+	  res.json({url:response});
+  }
+});
 });
 
 // Access the parse results as request.body
@@ -61,7 +86,8 @@ app.post('/reg',function(request,response){
 });
 
 app.post('/help_res',function(request,response){
-	var quer="select * from help where status='OPEN'";
+	//var quer="select * from help where status='OPEN'";
+	var quer="select help.id,help.no_of_people,help.landmark,help.contact,help.message,help.location,user.name name from help,user where help.requested_user=user.id and status='OPEN'";
 	db.query(quer,function(err,result){
 		if (err) throw err;
 		console.log(request.body.username);
@@ -71,13 +97,21 @@ app.post('/help_res',function(request,response){
 	});
 });
 app.post('/help_mine',function(request,response){
-	var quer="select * from help where requested_user="+request.body.userid;
+	var quer="select help.id,help.no_of_people,help.landmark,help.contact,help.message,help.location,help.requested_user,help.status,user.name 'accepted_name',user.phone 'accepted_contact' from help,user where accepted_user=user.id and requested_user="+request.body.userid;
 	db.query(quer,function(err,result){
 		if (err) throw err;
 		console.log(request.body.username);
 		console.log(result.length);
-		response.json(result);
-		
+		response.json(result);		
+	});
+});
+app.post('/vol_help_mine',function(request,response){
+	var quer="select help.id,help.no_of_people,help.landmark,help.contact,help.message,help.location,help.requested_user,help.status,user.name 'accepted_name',user.phone 'accepted_contact' from help,user where accepted_user=user.id and accepted_user="+request.body.userid;
+	db.query(quer,function(err,result){
+		if (err) throw err;
+		console.log(request.body.username);
+		console.log(result.length);
+		response.json(result);		
 	});
 });
 app.post('/help_req',function(request,response){
@@ -143,7 +177,7 @@ app.post('/miss_req',function(request,response){
 	});
 });
 app.post('/accept_help',function(request,response){
-	var quer=" update help set status='ACCEPTED' where id="+request.body.id;
+	var quer=" update help set status='ACCEPTED',accepted_user="+request.body.userid+" where id="+request.body.id;
 	console.log(quer);
 	db.query(quer,function(err,result){
 		if (err) 
@@ -157,7 +191,7 @@ app.post('/accept_help',function(request,response){
 });
 
 app.post('/accept_req',function(request,response){
-	var quer=" update requests set status='ACCEPTED' where id="+request.body.id;
+	var quer=" update requests set status='ACCEPTED',accepted_user="+request.body.userid+"  where id="+request.body.id;
 	console.log(quer);
 	db.query(quer,function(err,result){
 		if (err) 
@@ -191,6 +225,7 @@ app.post('/requests',function(request,response){
 });
 app.post('/request_res',function(request,response){
 	var quer="select * from requests where status='OPEN'";
+	//var quer="select requests.id,requests.name,requests.contact,requests.no_of_people,requests.location,requests.status,requests.accepted_user,user.name 'name',user.phone 'accepted_contact' from requests where requests.reported_user=user.id and status='OPEN'";
 	db.query(quer,function(err,result){
 		if (err) throw err;
 		console.log(request.body.username);
@@ -200,7 +235,18 @@ app.post('/request_res',function(request,response){
 	});
 });
 app.post('/request_mine',function(request,response){
-	var quer="select * from requests where requested_user="+request.body.userid;
+	var quer="select requests.id,requests.name,requests.contact,requests.no_of_people,requests.location,requests.status,requests.accepted_user,user.name 'accepted_name',user.phone 'accepted_contact' from requests,user where requests.accepted_user=user.id and requested_user="+request.body.userid;
+	db.query(quer,function(err,result){
+		if (err) throw err;
+		console.log(request.body.username);
+		console.log(result.length);
+		response.json(result);
+		
+	});
+});
+app.post('/vol_request_mine',function(request,response){
+	var quer="select requests.id,requests.name,requests.contact,requests.no_of_people,requests.location,requests.status,requests.accepted_user,user.name 'accepted_name',user.phone 'accepted_contact' from requests,user where requests.accepted_user=user.id and requests.accepted_user="+request.body.userid;
+	console.log(quer);
 	db.query(quer,function(err,result){
 		if (err) throw err;
 		console.log(request.body.username);
